@@ -37,6 +37,7 @@
 #define TIMEOUT     3000
 #define ENCRYPTKEY  "sampleEncryptKey"
 
+byte targetID = 55;
 RFM69 radio;
 char c = 0;
 char input[64]; //serial input buffer
@@ -55,7 +56,10 @@ void loop(){
   byte inputLen = readSerialLine(input);
   
   if (inputLen == 4 && input[0]=='F' && input[1]=='L' && input[2]=='X' && input[3]=='?') {
-    CheckForSerialHEX((byte*)input, inputLen, radio, TARGET_ID, TIMEOUT, ACK_TIME, true);
+    CheckForSerialHEX((byte*)input, inputLen, radio, targetID, TIMEOUT, ACK_TIME, true);
+  }
+  else if (input[0]=='M' && input[1]=='I' && input[2]=='D' && input[3]=='?') {
+    targetID = ?;
   }
   else if (inputLen>0) { //just echo back
     Serial.print("SERIAL IN > ");Serial.println(input);
