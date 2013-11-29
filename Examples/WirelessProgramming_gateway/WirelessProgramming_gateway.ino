@@ -24,7 +24,6 @@
 #include <WirelessHEX69.h>
 
 #define MYID        1   // node ID used for this unit
-#define TARGET_ID   55  // ID of node being wirelessly reprogrammed
 #define NETWORKID   250
 //Match frequency to the hardware version of the radio on your Moteino (uncomment one):
 //#define FREQUENCY   RF69_433MHZ
@@ -37,7 +36,7 @@
 #define TIMEOUT     3000
 #define ENCRYPTKEY  "sampleEncryptKey"
 
-byte targetID = 55;
+byte targetID = 10;   // default
 RFM69 radio;
 char c = 0;
 char input[64]; //serial input buffer
@@ -58,8 +57,13 @@ void loop(){
   if (inputLen == 4 && input[0]=='F' && input[1]=='L' && input[2]=='X' && input[3]=='?') {
     CheckForSerialHEX((byte*)input, inputLen, radio, targetID, TIMEOUT, ACK_TIME, true);
   }
-  else if (input[0]=='M' && input[1]=='I' && input[2]=='D' && input[3]=='?') {
-    targetID = ?;
+  else if (input[0]=='M' && input[1]=='I' && input[2]=='D' && input[3]==':') {
+    targetID = 0;
+    for (byte i = 4; i<inputLen; i++) //up to 3 characters for target ID
+    {
+      if (input[i] >=48 && input[i]<=57)
+        targetID = targetID*10+input[i]-48;
+    }
   }
   else if (inputLen>0) { //just echo back
     Serial.print("SERIAL IN > ");Serial.println(input);
